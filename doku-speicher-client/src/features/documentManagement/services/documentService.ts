@@ -82,8 +82,9 @@ const downloadDocument = async (
 };
 
 const shareDocument = async (requestData: ShareDocumentRequest) => {
+  const baseUrl = import.meta.env.VITE_API_BASE_URL;
   const { documentId, expiryDateTime } = requestData;
-  const url = `https://localhost:7011/api/documentShareLink/create/${documentId}`;
+  const url = `${baseUrl}/api/documentShareLink/create/${documentId}`;
   const body = { expiryDateTime };
   const response = await axios.post(url, body);
   return response.data;

@@ -7,19 +7,19 @@ export const useGetFileIcon = (fileType?: FileType): JSX.Element => {
 
   switch (fileType) {
     case FileType.PDF:
-      return <img src="src/assets/pdf-icon.png" alt="PDF" />;
+      return <img src="assets/pdf-icon.png" alt="PDF" />;
     case FileType.EXCEL:
-      return <img src="src/assets/xlsx-icon.png" alt="Excel" />;
+      return <img src="assets/xlsx-icon.png" alt="Excel" />;
     case FileType.WORD:
-      return <img src="src/assets/docx-icon.png" alt="Word" />;
+      return <img src="assets/docx-icon.png" alt="Word" />;
     case FileType.TEXT:
-      return <img src="src/assets/txt-icon.png" alt="Text" />;
+      return <img src="assets/txt-icon.png" alt="Text" />;
     case FileType.PNG:
-      return <img src="src/assets/png-icon.png" alt="Image" />;
+      return <img src="assets/png-icon.png" alt="Image" />;
     case FileType.JPG:
-      return <img src="src/assets/jpg-icon.png" alt="Image" />;
+      return <img src="assets/jpg-icon.png" alt="Image" />;
     case FileType.JPEG:
-      return <img src="src/assets/jpeg-icon.png" alt="Image" />;
+      return <img src="assets/jpeg-icon.png" alt="Image" />;
     default:
       return <img src="" alt="Default" />;
   }

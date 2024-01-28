@@ -168,7 +168,7 @@ const Dashboard: React.FC = () => {
     <div className="w-full flex h-full overflow-x-hidden gap-3 text-darkGray">
       <div className="flex  items-center  flex-col basis-[15%] bg-lightBackground h-full p-5">
         <img
-          src="src/assets/avatar.jpg"
+          src="assets/avatar.jpg"
           alt=""
           className="flex w-24 h-24 rounded-full bg-red-200 mt-16"
         />

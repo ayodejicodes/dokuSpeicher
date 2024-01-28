@@ -27,7 +27,7 @@ const LoginForm: React.FC = () => {
   return (
     <div
       className="flex justify-center items-center h-screen bg-cover bg-center bg-no-repeat"
-      style={{ backgroundImage: "url('src/assets/backgroundImage.jpg')" }}
+      style={{ backgroundImage: "url('assets/backgroundImage.jpg')" }}
     >
       <form
         className="p-10 bg-lightBlue rounded-lg shadow-lg"

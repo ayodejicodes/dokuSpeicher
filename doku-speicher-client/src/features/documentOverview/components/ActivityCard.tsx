@@ -2,7 +2,7 @@ const ActivityCard = () => {
   return (
     <div className="w-full h-[60px] bg-lightBackground rounded-lg flex items-center">
       <div className="h-[40px] w-[40px]  rounded-full m-4">
-        <img src="src/assets/sample.jpg" className="rounded-full" alt="" />
+        <img src="assets/sample.jpg" className="rounded-full" alt="" />
       </div>
       <div>
         <p className="text-sm font-semibold break-all ">

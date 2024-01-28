@@ -1,21 +1,29 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
-import { ToastContainer } from "react-toastify";
 import Dashboard from "./pages/Dashboard";
 import Layout from "./components/layout/Layout";
+import { ToastContainer } from "react-toastify";
 
 function App() {
   return (
     <Router>
       <Routes>
+        {/* Redirect from index page to /login */}
+        <Route path="/" element={<Navigate replace to="/login" />} />
+
         {/* Routes without Layout */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
         {/* Routes with Layout */}
         <Route path="/" element={<Layout />}>
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="dashboard" element={<Dashboard />} />
         </Route>
       </Routes>
       <ToastContainer

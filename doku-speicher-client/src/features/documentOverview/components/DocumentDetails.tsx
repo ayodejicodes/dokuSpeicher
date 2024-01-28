@@ -102,7 +102,7 @@ const DocumentDetails = () => {
         </div>
 
         <div className="w-28 h-28">
-          <img src={`src/assets/${fileType}-icon.png`} alt="" />
+          <img src={`assets/${fileType}-icon.png`} alt="" />
         </div>
       </div>
 

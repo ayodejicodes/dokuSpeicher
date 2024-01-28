@@ -89,3 +89,5 @@ OpenCover/
 
 # Visual Studio Code
 .vscode/
+.config/
+Properties/
