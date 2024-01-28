@@ -53,7 +53,7 @@ namespace doku_speicher_api.Controllers
                 LastName = model.LastName,
                 UserName = model.UserName,
                 Email = model.Email,
-                DateCreated = DateTime.UtcNow
+                DateCreated = DateTime.Now
             };
 
             try
@@ -115,7 +115,7 @@ namespace doku_speicher_api.Controllers
             try
             {
               
-                user.LastLogin = DateTime.UtcNow;
+                user.LastLogin = DateTime.Now;
                 await _userManager.UpdateAsync(user);
 
 
@@ -156,7 +156,7 @@ namespace doku_speicher_api.Controllers
             new Claim(ClaimTypes.Name, user.UserName),
             new Claim(ClaimTypes.Email, user.Email),
                 }),
-                Expires = DateTime.UtcNow.AddDays(7), 
+                Expires = DateTime.Now.AddDays(7), 
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
 

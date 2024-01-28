@@ -44,7 +44,7 @@ namespace doku_speicher_api.Services.DocumentService
             return await _context.DocumentShareLinks
                                  .FirstOrDefaultAsync(sl => sl.GeneratedLink.EndsWith(uniqueToken) &&
                                                             sl.IsActive &&
-                                                            sl.ExpiryDateTime >= DateTime.UtcNow);
+                                                            sl.ExpiryDateTime >= DateTime.Now);
         }
 
 

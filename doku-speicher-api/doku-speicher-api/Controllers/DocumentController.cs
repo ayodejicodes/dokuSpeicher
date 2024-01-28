@@ -97,7 +97,7 @@ namespace doku_speicher_api.Controllers
 
                     var filePath = await _blobStorageService.UploadBlobAsync(file);
                     var document = _mapper.Map<Document>(new DocumentCreateDto()); 
-                    document.UploadDateTime = DateTime.UtcNow;
+                    document.UploadDateTime = DateTime.Now;
                     document.Name = fileName;
                     document.FilePath = filePath;
                     document.UserId = userId;
@@ -142,7 +142,7 @@ namespace doku_speicher_api.Controllers
                 _mapper.Map(updateDto, existingDocument);
                 existingDocument.Name = $"{updateDto.Name}{fileExtension}";
 
-                existingDocument.LastEditedTime = DateTime.UtcNow;
+                existingDocument.LastEditedTime = DateTime.Now;
 
                 existingDocument = await _documentService.UpdateDocumentAsync(id, existingDocument);
 

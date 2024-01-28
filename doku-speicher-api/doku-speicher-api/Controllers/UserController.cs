@@ -56,7 +56,7 @@ namespace doku_speicher_api.Controllers
 
             _mapper.Map(updateUserDto, user);
 
-            user.ProfileLastEditedTime = DateTime.UtcNow;
+            user.ProfileLastEditedTime = DateTime.Now;
 
             var result = await _userManager.UpdateAsync(user);
             if (!result.Succeeded)

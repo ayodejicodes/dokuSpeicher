@@ -74,7 +74,7 @@ namespace doku_speicher_api.Controllers
                 {
                     return NotFound("Share link not found");
                 }
-                else if (documentShareLink.ExpiryDateTime < DateTime.UtcNow)
+                else if (documentShareLink.ExpiryDateTime < DateTime.Now)
                 {
                     return NotFound("Expired share link");
                 }
