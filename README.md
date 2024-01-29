@@ -1,4 +1,8 @@
 ## Document Management System (DMS)
+
+![image](https://github.com/ayodejicodes/dokuSpeicher/assets/62625879/c1d8c82e-3b13-48a6-bf8b-d4dfebc2abb0)
+
+
 This repository contains the source code for a Document Management System (DMS) designed to handle various types of documents including PDF, Excel, Word, TXT, and picture files. The system provides features for uploading, downloading, displaying, and sharing documents with an intuitive user interface and a robust API.
 
 Features
