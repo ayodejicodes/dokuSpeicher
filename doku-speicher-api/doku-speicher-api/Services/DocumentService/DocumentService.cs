@@ -74,5 +74,13 @@ namespace doku_speicher_api.Services.DocumentService
                                  .FirstOrDefaultAsync(d => d.FilePath.EndsWith(blobName));
         }
 
+        public async Task<IEnumerable<Document>> GetDocumentsByIdsAsync(List<Guid> documentIds)
+        {
+            return await _context.Documents
+                                 .Where(d => documentIds.Contains(d.DocumentId))
+                                 //.Include(d => d.ApplicationUser)
+                                 .ToListAsync();
+        }
+
     }
 }

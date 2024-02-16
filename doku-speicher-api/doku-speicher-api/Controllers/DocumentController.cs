@@ -40,7 +40,11 @@ namespace doku_speicher_api.Controllers
         public async Task<ActionResult<ApiResponse<IEnumerable<Document>>>> GetAllDocuments()
         {
             var documents = await _documentService.GetAllDocumentsAsync();
-            return Ok(ApiResponse<IEnumerable<Document>>.Success(documents));
+
+            // Sort documents by UploadDateTime from latest to oldest
+            var sortedDocuments = documents.OrderByDescending(d => d.UploadDateTime);
+
+            return Ok(ApiResponse<IEnumerable<Document>>.Success(sortedDocuments));
         }
 
         [HttpGet("{id:Guid}")]
@@ -59,7 +63,7 @@ namespace doku_speicher_api.Controllers
 
 
         [HttpPost("upload")]
-        [Authorize]
+        //[Authorize]
         public async Task<ActionResult<ApiResponse<IEnumerable<Document>>>> CreateDocuments([FromForm] List<IFormFile> files)
         {
             if (files == null || files.Count == 0)
@@ -192,33 +196,112 @@ namespace doku_speicher_api.Controllers
 
 
 
+        //[HttpGet("download")]
+        //public async Task<IActionResult> DownloadDocuments([FromQuery] List<string>? blobNames = null)
+        //{
+        //    try
+        //    {
+        //        if (blobNames == null || blobNames.Count == 0)
+        //        {
+        //            return BadRequest("No documents selected for download.");
+        //        }
+
+        //        if (blobNames.Count == 1)
+        //        {
+                  
+        //            var blobName = blobNames[0];
+        //            var document = await _documentService.GetDocumentByBlobNameAsync(blobName);
+        //            if (document == null)
+        //            {
+        //                return NotFound("Document not found.");
+        //            }
+
+        //            var stream = await _blobStorageService.GetBlobAsync(blobName);
+        //            if (stream == null)
+        //            {
+        //                return NotFound("File not found in the blob storage.");
+        //            }
+
+                  
+        //            document.DownloadCount += 1;
+        //            await _documentService.UpdateDocumentAsync(document.DocumentId, document);
+
+        //            string contentType = "application/octet-stream";
+        //            return File(stream, contentType, document.Name);
+        //        }
+        //        else
+        //        {
+                   
+        //            var documents = new List<Document>();
+        //            var memoryStream = new MemoryStream();
+
+        //            using (var zipArchive = new ZipArchive(memoryStream, ZipArchiveMode.Create, true))
+        //            {
+        //                foreach (var blobName in blobNames)
+        //                {
+        //                    var document = await _documentService.GetDocumentByBlobNameAsync(blobName);
+        //                    if (document != null)
+        //                    {
+        //                        var stream = await _blobStorageService.GetBlobAsync(blobName);
+        //                        if (stream != null)
+        //                        {
+                                  
+        //                            document.DownloadCount += 1;
+        //                            await _documentService.UpdateDocumentAsync(document.DocumentId, document);
+
+        //                            var entry = zipArchive.CreateEntry(document.Name);
+        //                            using (var entryStream = entry.Open())
+        //                            {
+        //                                await stream.CopyToAsync(entryStream);
+        //                            }
+        //                            documents.Add(document);
+        //                        }
+        //                    }
+        //                }
+        //            }
+
+        //            memoryStream.Seek(0, SeekOrigin.Begin);
+        //            var contentType = "application/zip";
+        //            var archiveName = "downloaded_documents.zip";
+
+        //            return File(memoryStream, contentType, archiveName);
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex, "Error occurred while attempting to download documents.");
+        //        return StatusCode(500, "An error occurred while attempting to download documents.");
+        //    }
+        //}
+
+
         [HttpGet("download")]
-        public async Task<IActionResult> DownloadDocuments([FromQuery] List<string>? blobNames = null)
+        public async Task<IActionResult> DownloadDocuments([FromQuery] List<Guid>? documentIds = null)
         {
             try
             {
-                if (blobNames == null || blobNames.Count == 0)
+                if (documentIds == null || documentIds.Count == 0)
                 {
                     return BadRequest("No documents selected for download.");
                 }
 
-                if (blobNames.Count == 1)
-                {
-                  
-                    var blobName = blobNames[0];
-                    var document = await _documentService.GetDocumentByBlobNameAsync(blobName);
-                    if (document == null)
-                    {
-                        return NotFound("Document not found.");
-                    }
 
+                var documents = await _documentService.GetDocumentsByIdsAsync(documentIds);
+                if (documents == null)
+                {
+                    return NotFound("Documents not found.");
+                }
+
+                if (documents.Count() == 1)
+                {
+                    var document = documents.First();
+                    var blobName = Path.GetFileName(document.FilePath);
                     var stream = await _blobStorageService.GetBlobAsync(blobName);
                     if (stream == null)
                     {
                         return NotFound("File not found in the blob storage.");
                     }
 
-                  
                     document.DownloadCount += 1;
                     await _documentService.UpdateDocumentAsync(document.DocumentId, document);
 
@@ -227,31 +310,23 @@ namespace doku_speicher_api.Controllers
                 }
                 else
                 {
-                   
-                    var documents = new List<Document>();
                     var memoryStream = new MemoryStream();
-
                     using (var zipArchive = new ZipArchive(memoryStream, ZipArchiveMode.Create, true))
                     {
-                        foreach (var blobName in blobNames)
+                        foreach (var document in documents)
                         {
-                            var document = await _documentService.GetDocumentByBlobNameAsync(blobName);
-                            if (document != null)
+                            var blobName = Path.GetFileName(document.FilePath);
+                            var stream = await _blobStorageService.GetBlobAsync(blobName);
+                            if (stream != null)
                             {
-                                var stream = await _blobStorageService.GetBlobAsync(blobName);
-                                if (stream != null)
+                                var entry = zipArchive.CreateEntry(document.Name);
+                                using (var entryStream = entry.Open())
                                 {
-                                  
-                                    document.DownloadCount += 1;
-                                    await _documentService.UpdateDocumentAsync(document.DocumentId, document);
-
-                                    var entry = zipArchive.CreateEntry(document.Name);
-                                    using (var entryStream = entry.Open())
-                                    {
-                                        await stream.CopyToAsync(entryStream);
-                                    }
-                                    documents.Add(document);
+                                    await stream.CopyToAsync(entryStream);
                                 }
+
+                                document.DownloadCount += 1;
+                                await _documentService.UpdateDocumentAsync(document.DocumentId, document);
                             }
                         }
                     }
@@ -265,13 +340,9 @@ namespace doku_speicher_api.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while attempting to download documents.");
-                return StatusCode(500, "An error occurred while attempting to download documents.");
+                return StatusCode(500, $"An error occurred while attempting to download documents: {ex.Message}");
             }
         }
-
-
-
 
 
 

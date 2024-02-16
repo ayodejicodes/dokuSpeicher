@@ -10,5 +10,6 @@ namespace doku_speicher_api.Services.DocumentService
         Task<Document> UpdateDocumentAsync(Guid id, Document document);
         Task<bool> DeleteDocumentAsync(Guid id);
         Task<Document> GetDocumentByBlobNameAsync(string blobName);
+        Task<IEnumerable<Document>> GetDocumentsByIdsAsync(List<Guid> documentIds);
     }
 }
