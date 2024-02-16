@@ -1,0 +1,93 @@
+.sidebar {
+  top: 0;
+  height: 100vh;
+  position: fixed;
+  max-width: 14.5rem;
+  min-width: 14.5rem;
+  overflow-y: auto;
+  border-right: 1px solid #eaecf0;
+  transition: all 0.35s ease-in-out;
+  background-color: rgb(239, 242, 253);
+  z-index: 10;
+}
+
+.sidebar .btn.btn-close{
+  display: none;
+}
+
+.sidebar-content{
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  height: 100%;
+}
+
+.user-name{
+  margin-bottom: 0;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+
+.profile-container{
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap:1rem;
+  margin-top: 3rem;
+
+}
+
+.profile-image-container{
+  max-width: 6rem;
+  width: 100%;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.profile-image-container > img{
+  max-width: 100%;
+  display: block;
+}
+
+
+.btn-logout{
+  background-color: rgb(245, 57, 95);
+  color: #fff;
+  border-radius: 4px !important;
+  line-height: 1.5;
+  transition: all 250ms ease-in;
+}
+
+
+.btn-logout:hover{
+  background-color: rgb(228, 44, 56);
+}
+
+
+@media (max-width: 768px) {
+
+  .sidebar[data-collapsed-sidebar = 'true'] {
+    max-width: 17.5rem;
+    min-width: 17.5rem;
+    transform: translateX(0);
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  }
+
+
+  .sidebar[data-collapsed-sidebar = 'false'] {
+    transform: translateX(-100%);
+  }
+
+  .sidebar[data-collapsed-sidebar = 'true'] .btn.btn-close{
+    display: block;
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+  } 
+}

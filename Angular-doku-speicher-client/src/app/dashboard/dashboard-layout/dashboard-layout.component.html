@@ -1,0 +1,11 @@
+<app-sidebar [dataCollapsedSidebar]="isSidebarCollapsed"></app-sidebar>
+<div class="dashboard-layout">
+  <ng-container *ngIf="!isSidebarCollapsed">
+    <button class="btn btn-menu" (click)="toggleSidebar()">
+      <img src="../../../assets/svgs/hamburger-icon.svg"/>
+    </button>
+  </ng-container>
+  <div class="main-content">
+    <router-outlet></router-outlet>
+  </div>
+</div>

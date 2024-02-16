@@ -1,0 +1,35 @@
+.dashboard-layout{
+  position: relative;
+  /* padding: 1.5rem; */
+  gap: 1.5rem;
+  margin-left: 15rem;
+  max-width: 100%;
+  /* background-color: #f0f2fe; */
+  min-height: 100vh;
+  transition: all 350ms ease-in;
+}
+
+.btn.btn-menu{
+  max-width: fit-content;
+  box-shadow: none;
+  position: absolute;
+  top: 1.5rem;
+  left: 1.5rem;
+}
+
+.main-content{
+  /* margin-top: 1.5rem; */
+  background-color: #fff;
+  /* padding: 1.5rem; */
+}
+
+
+@media (max-width: 768px){
+  .dashboard-layout{
+    margin-left: 0;
+  }
+
+  /* .main-content{
+    padding-top: 5.5rem;
+  } */
+}

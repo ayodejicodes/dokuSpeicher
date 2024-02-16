@@ -1,0 +1,452 @@
+<div class="content-container">
+  <div class="d-flex flex-column gap-3 content primary-content">
+    <div class="d-flex flex-column gap-3">
+      <h1 class="primary-heading">Dashboard</h1>
+      <p class="dashboard-desctiption">
+        Upload, download and manage all your documents with ease.
+      </p>
+      <div class="file-upload-container">
+        <div class="file-upload">
+          <input
+            #fileInput
+            type="file"
+            multiple
+            (change)="uploadFile($event)"
+          />
+          <img
+            src="../../../assets/svgs/upload-icon.svg"
+            *ngIf="!this.imageFilePreview"
+          />
+          <p *ngIf="!this.imageFilePreview">Click to upload</p>
+          <ng-container *ngIf="this.imageFilePreview">
+            <p>
+              <span *ngFor="let file of this.filesRequest">{{
+                file.name + ", "
+              }}</span>
+            </p>
+          </ng-container>
+        </div>
+        <div class="action-btns" *ngIf="this.fileUploaded">
+          <button class="btn btn-outline-danger" (click)="cancelUploading()">
+            Cancel
+          </button>
+          <button class="btn btn-primary" (click)="uploadDocuments()">
+            Upload
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="uploaded-stats-container">
+      <div class="each-stats pdf-stats">
+        <img class="mb-2" src="../../../assets/svgs/pdf-file-icon.svg" />
+        <p class="file-type">PDF</p>
+        <p class="file-details">
+          {{ this.dashboardStatsCalculation?.pdfFileCount }} Files -
+          {{ formatBytes(this.dashboardStatsCalculation?.pdfFileSize) }}
+        </p>
+      </div>
+      <div class="each-stats excel-stats">
+        <img class="mb-2" src="../../../assets/svgs/xlsx-file-icon.svg" />
+        <p class="file-type">Excel</p>
+        <p class="file-details">
+          {{ this.dashboardStatsCalculation?.excelFileCount }} Files -
+          {{ formatBytes(this.dashboardStatsCalculation?.excelFileSize) }}
+        </p>
+      </div>
+      <div class="each-stats word-stats">
+        <img class="mb-2" src="../../../assets/svgs/docx-file-icon.svg" />
+        <p class="file-type">Word</p>
+        <p class="file-details">
+          {{ this.dashboardStatsCalculation?.wordFileCount }} Files -
+          {{ formatBytes(this.dashboardStatsCalculation?.wordFileSize) }}
+        </p>
+      </div>
+      <div class="each-stats text-stats">
+        <img class="mb-2" src="../../../assets/svgs/txt-file-icon.svg" />
+        <p class="file-type">TXT</p>
+        <p class="file-details">
+          {{ this.dashboardStatsCalculation?.txtFileCount }} Files -
+          {{ formatBytes(this.dashboardStatsCalculation?.txtFileSize) }}
+        </p>
+      </div>
+      <div class="each-stats images-stats">
+        <img class="mb-2" src="../../../assets/svgs/image-file-icon.svg" />
+        <p class="file-type">Images</p>
+        <p class="file-details">
+          {{ this.dashboardStatsCalculation?.imagesFileCount }} Files -
+          {{ formatBytes(this.dashboardStatsCalculation?.imagesFileSize) }}
+        </p>
+      </div>
+    </div>
+    <div class="table-container">
+      <div class="filter-container">
+        <div class="filters-content">
+          <div class="form-control-with-icon icon-on-left">
+            <input
+              type="email"
+              class="form-control"
+              id="searchFormControlInput"
+              placeholder="Search"
+              [(ngModel)]="query"
+            />
+            <img
+              class="field-icon-left"
+              src="../../../assets/svgs/search-icon.svg"
+            />
+          </div>
+          <div class="filter-btns-container">
+            <label class="radio-button" (click)="filterFiles('All')">
+              <input type="radio" name="filterRadio" value="all" />
+              All
+            </label>
+            <label class="radio-button" (click)="filterFiles('pdf')">
+              <input type="radio" name="filterRadio" value="pdf" />
+              pdf
+            </label>
+            <label class="radio-button" (click)="filterFiles('xlsx')">
+              <input type="radio" name="filterRadio" value="xlsx" />
+              xlsx
+            </label>
+            <label class="radio-button" (click)="filterFiles('docx')">
+              <input type="radio" name="filterRadio" value="docx" />
+              docx
+            </label>
+            <label class="radio-button" (click)="filterFiles('txt')">
+              <input type="radio" name="filterRadio" value="txt" />
+              txt
+            </label>
+            <label class="radio-button" (click)="filterFiles('png')">
+              <input type="radio" name="filterRadio" value="png" />
+              png
+            </label>
+            <label class="radio-button" (click)="filterFiles('jpg')">
+              <input type="radio" name="filterRadio" value="jpg" />
+              jpg
+            </label>
+            <label class="radio-button" (click)="filterFiles('jpeg')">
+              <input type="radio" name="filterRadio" value="jpeg" />
+              jpeg
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="mb-3" *ngIf="this.isShowDownloadButton">
+        <button class="btn btn-primary" (click)="downloadDocument()">
+          Download Selected
+        </button>
+      </div>
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col"></th>
+              <th scope="col">File name</th>
+              <th scope="col">Date/Time</th>
+              <th scope="col">File size</th>
+            </tr>
+          </thead>
+          <tbody>
+            <ng-container
+              *ngFor="
+                let file of this.filesArray
+                  | filter : query
+                  | paginate : { itemsPerPage: 6, currentPage: p };
+                let i = index
+              "
+            >
+              <tr>
+                <td
+                  class="text-center"
+                  [class.table-row-selected]="file?.checked"
+                >
+                  <div class="form-check">
+                    <input
+                      class="form-check-input"
+                      name="tableRadio"
+                      [(ngModel)]="file.checked"
+                      (change)="toggleCheckbox($event, file.documentId)"
+                      type="checkbox"
+                      value=""
+                      [id]="file.id"
+                    />
+                  </div>
+                </td>
+                <td
+                  (click)="openPreview(file.documentId, i)"
+                  [class.table-row-selected]="file?.checked"
+                >
+                  <div class="d-flex align-items-center gap-2">
+                    <img
+                      class="image-icon"
+                      [src]="
+                        '../../../assets/images/' + file.type + '-icon.png'
+                      "
+                    />
+                    <p class="mb-0">{{ file.name }}</p>
+                  </div>
+                </td>
+                <td
+                  (click)="openPreview(file.documentId, i)"
+                  [class.table-row-selected]="file?.checked"
+                >
+                  {{
+                    convertDate(file.uploadDateTime) | date : "MMM d, y, h:mm a"
+                  }}
+                </td>
+                <td
+                  (click)="openPreview(file.documentId, i)"
+                  [class.table-row-selected]="file?.checked"
+                >
+                  {{ formatBytes(file.fileSize) }}
+                </td>
+              </tr>
+            </ng-container>
+          </tbody>
+        </table>
+        <pagination-controls (pageChange)="p = $event"></pagination-controls>
+      </div>
+    </div>
+  </div>
+  <div class="d-flex flex-column content secondary-content">
+    <!-- conditional -->
+    <ng-container *ngIf="!this.isShowPreview">
+      <div class="d-flex flex-column">
+        <h2 class="secondary-heading">Data Storage</h2>
+        <div class="chart-container">
+          <div id="filesDataChart" style="height: 350px"></div>
+        </div>
+        <div class="activities-container">
+          <h2 class="secondary-heading mb-3">Recent Activities</h2>
+          <ul class="activities-list">
+            <li class="activity-item">
+              <img class="profile-img" src="https://picsum.photos/200/300" />
+              <div class="activity">
+                <p class="activity-msg">Ayodeji shared a file</p>
+                <p class="activity-date">2024/01/12 23:47:56</p>
+              </div>
+            </li>
+            <li class="activity-item">
+              <img class="profile-img" src="https://picsum.photos/200/300" />
+              <div class="activity">
+                <p class="activity-msg">Ayodeji shared a file</p>
+                <p class="activity-date">2024/01/12 23:47:56</p>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- Preview -->
+    <ng-container *ngIf="this.isShowPreview">
+      <div class="preview-container width-preview-container">
+        <div class="d-flex align-items-center justify-content-between gap-3">
+          <h2 class="secondary-heading">Preview</h2>
+          <button
+            class="btn btn-danger close-btn"
+            (click)="this.closePreview()"
+          >
+            <img src="../../../assets/svgs/close-icon.svg" />
+          </button>
+        </div>
+        <div class="image-preview-container">
+          <ngx-doc-viewer
+            *ngIf="
+              this.selectedFile?.type === 'ppt' ||
+              this.selectedFile?.type === 'pptx' ||
+              this.selectedFile?.type === 'doc' ||
+              this.selectedFile?.type === 'docx' ||
+              this.selectedFile?.type === 'xls' ||
+              this.selectedFile?.type === 'xlsx'
+            "
+            [url]="this.selectedFile?.filePath"
+            viewer="office"
+            style="width: 97%; height: 50vh"
+          ></ngx-doc-viewer>
+
+          <ngx-doc-viewer
+            *ngIf="
+              this.selectedFile?.type !== 'ppt' &&
+              this.selectedFile?.type !== 'pptx' &&
+              this.selectedFile?.type !== 'doc' &&
+              this.selectedFile?.type !== 'docx' &&
+              this.selectedFile?.type !== 'xls' &&
+              this.selectedFile?.type !== 'xlsx'
+            "
+            [url]="this.selectedFile?.filePath"
+            viewer="url"
+            style="width: 97%; height: 50vh"
+          ></ngx-doc-viewer>
+        </div>
+        <div class="file-details-container">
+          <div class="d-flex justify-content-between">
+            <div class="d-flex flex-column" style="gap: 0.75rem">
+              <div class="file-detail-preview">
+                <span>File Name:</span>
+                <p>{{ this.selectedFile?.name }}</p>
+              </div>
+              <div class="file-detail-preview">
+                <span>Date uploaded:</span>
+                <p>
+                  {{
+                    convertDate(this.selectedFile?.uploadDateTime)
+                      | date : "MMM d, y, h:mm a"
+                  }}
+                </p>
+              </div>
+            </div>
+            <div class="image-container">
+              <img
+                [src]="
+                  '../../../assets/images/' +
+                  this.selectedFile?.type +
+                  '-icon.png'
+                "
+              />
+            </div>
+          </div>
+          <div
+            class="d-flex justify-content-between"
+            style="margin-top: 0.75rem; margin-bottom: 0.5rem"
+          >
+            <div class="file-detail-preview">
+              <span>Downloaded:</span>
+              <p>{{ this.selectedFile?.downloadCount }}</p>
+            </div>
+            <div class="file-detail-preview" style="margin-right: 1.5rem">
+              <span>File size:</span>
+              <p>{{ formatBytes(this.selectedFile?.fileSize) }}</p>
+            </div>
+          </div>
+          <div class="d-flex flex-column gap-3">
+            <input
+              *ngIf="this.documentShareLink === ''"
+              type="number"
+              [(ngModel)]="this.expiryDateCount"
+              name="expiryDateCount"
+              placeholder="Expiry days must be set to share"
+              value=""
+              style="
+                font-size: 16px;
+                background-color: rgb(239, 242, 253);
+                border: none;
+              "
+            />
+
+            <p *ngIf="this.documentShareLink !== ''" class="expiry-msg">
+              {{ this.documentShareLink }}
+            </p>
+            <button
+              class="btn btn-primary max-width-100"
+              *ngIf="this.documentShareLink !== ''"
+              (click)="copyToClipBoard()"
+            >
+              Copy Link
+            </button>
+
+            <div class="action-btns-container">
+              <div>
+                <button class="btn btn-primary" (click)="downloadDocument()">
+                  <img src="../../../assets/svgs/download-icon.svg" />
+                </button>
+                <span>Download</span>
+              </div>
+              <div>
+                <button
+                  class="btn btn-primary"
+                  (click)="getDocumentShareLink()"
+                >
+                  <img src="../../../assets/svgs/share-icon.svg" />
+                </button>
+                <span>Share</span>
+              </div>
+
+              <div>
+                <button class="btn btn-primary" (click)="openEditModal()">
+                  <img src="../../../assets/svgs/edit.svg" />
+                </button>
+                <span>Edit</span>
+              </div>
+
+              <div>
+                <button class="btn btn-danger" (click)="deleteDocument()">
+                  <img src="../../../assets/svgs/trash.svg" />
+                </button>
+                <span>Delete</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+    <div class="footer-container">
+      <p class="copyright">2024 | Designed and Developed by</p>
+      <p class="developer-name">Ayodeji Fabusiwa</p>
+      <div class="social-links-container">
+        <a class="social-link" href="https://github.com" target="_blank">
+          <img src="../../../assets/svgs/github-logo.svg" />
+        </a>
+        <a class="social-link" href="https://linkedin.com" target="_blank">
+          <img src="../../../assets/svgs/linked-in-logo.svg" />
+        </a>
+        <a class="social-link" href="https://twitter.com" target="_blank">
+          <img src="../../../assets/svgs/twitter-logo.svg" />
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div
+  class="modal fade"
+  id="editModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+          (click)="closeEditModal()"
+          style="border: none; background: white"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <input
+            class="form-control"
+            name="editFileName"
+            [(ngModel)]="editFileName"
+          />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          data-dismiss="modal"
+          (click)="closeEditModal()"
+        >
+          Close
+        </button>
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="updateDocument()"
+        >
+          Save changes
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
