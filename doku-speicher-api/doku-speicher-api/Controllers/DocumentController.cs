@@ -12,6 +12,7 @@ using Serilog.Sinks.File;
 using System.IO.Compression;
 using System.Net;
 using System.Security.Claims;
+using System.Text.RegularExpressions;
 
 namespace doku_speicher_api.Controllers
 {
@@ -91,10 +92,12 @@ namespace doku_speicher_api.Controllers
                         continue;
                     }
 
-                   
-                    var fileName = Path.GetFileName(file.FileName);
 
-                 
+                    
+                    var originalFileName = Path.GetFileName(file.FileName);
+                    var sanitizedFileName = Regex.Replace(originalFileName, @"[^a-zA-Z0-9.]+", "_", RegexOptions.Compiled);
+
+
                     var fileExtension = Path.GetExtension(file.FileName).TrimStart('.');
 
                     var fileSize = file.Length;
@@ -102,7 +105,7 @@ namespace doku_speicher_api.Controllers
                     var filePath = await _blobStorageService.UploadBlobAsync(file);
                     var document = _mapper.Map<Document>(new DocumentCreateDto()); 
                     document.UploadDateTime = DateTime.Now;
-                    document.Name = fileName;
+                    document.Name = sanitizedFileName;
                     document.FilePath = filePath;
                     document.UserId = userId;
                     document.Type = fileExtension;
